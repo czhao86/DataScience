@@ -14,11 +14,11 @@ def mapper(record):
     # key: document identifier
     # value: document contents
     if record[0]=='a':
-	for i in range(0,4):
+	for i in range(0,5):
             mr.emit_intermediate(record[1]*5+i,record)
     else:
-        for j in range(0,4):
-	    mr.emit_intermediate(record[2]*5+j,record)
+        for j in range(0,5):
+	    mr.emit_intermediate(record[2]+5*j,record)
 
 
 def reducer(key, list_of_values):
@@ -27,8 +27,8 @@ def reducer(key, list_of_values):
     ans=0
     for value in list_of_values:
 	for temp in list_of_values:
-	    if value[1]==temp[2] and value[2]==temp[1]:
-		ans+=value[3]+temp[3]
+	    if value[0]=='a' and temp[0]=='b' and value[2]==temp[1]:
+		ans+=value[3]*temp[3]
     mr.emit((key/5,key%5,ans))
 
 
@@ -37,3 +37,4 @@ def reducer(key, list_of_values):
 if __name__ == '__main__':
   inputdata = open(sys.argv[1])
   mr.execute(inputdata, mapper, reducer)
+  print mr.intermediate
